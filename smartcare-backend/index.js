@@ -43,6 +43,12 @@ app.get("/", (req, res) => {
 });
 
 //routes
+import dataRoute from "./route/data.js";
+import authRoute from "./route/authRoutes.js";
+
+app.use("/api/data", dataRoute);
+app.use("/api/auth", authRoute);
+
 
 connectDB().then(() => {
   app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
