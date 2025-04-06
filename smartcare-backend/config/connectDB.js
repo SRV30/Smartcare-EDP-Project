@@ -8,7 +8,9 @@ dotenv.config();
 
 async function connectDB() {
   try {
-    await mongoose.connect("mongodb://127.0.0.1:27017/smartcare");
+    await mongoose.connect(
+      "mongodb+srv://atlas-sample-dataset-load-67f2c4664b4c9b7ca929b95d:12345678@cluster0.jrqwowo.mongodb.net/edp?retryWrites=true&w=majority&appName=Cluster0"
+    );
     console.log("connect DB");
   } catch (error) {
     console.log("Mongodb connect error", error);
