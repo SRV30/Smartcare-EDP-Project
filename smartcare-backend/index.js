@@ -48,6 +48,14 @@ import authRoute from "./route/authRoutes.js";
 
 app.use("/api/data", dataRoute);
 app.use("/api/auth", authRoute);
+app.get("/api/health-data", (req, res) => {
+  const dummyData = {
+    heartRate: Math.floor(Math.random() * (85 - 63 + 1)) + 60, // 60–110 bpm
+    spo2: Math.floor(Math.random() * (97 - 90 + 1)) + 90,       // 90–100%
+    temperature: (36 + Math.random() * 2).toFixed(1)             // 36.0–38.0 °C
+  };
+  res.json(dummyData);
+});
 
 
 connectDB().then(() => {

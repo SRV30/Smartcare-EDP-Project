@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { registerPatient } from "../api/auth";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, User, Mail, Lock } from "lucide-react";
+import { toast } from "sonner";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -50,24 +51,28 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
     if (!validateForm()) return;
-    
+  
     setIsLoading(true);
     try {
       const res = await registerPatient(formData);
-      navigate("/login", { 
-        state: { message: res.data.message || "Registration successful!" }
-      });
+  
+      toast.success("🎉 " + (res.data.message || "Registration successful!"));
+      
+      // Navigate after toast shows
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
     } catch (err) {
       const errorMessage = err.response?.data?.message || "Registration failed";
-      setValidationErrors({ 
-        form: errorMessage 
-      });
+      toast.error("❌ " + errorMessage);
+      setValidationErrors({ form: errorMessage });
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 to-black p-4">
