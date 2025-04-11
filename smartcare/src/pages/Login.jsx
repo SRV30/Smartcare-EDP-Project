@@ -45,6 +45,7 @@ const Login = () => {
     try {
       const res = await loginPatient(formData);
       localStorage.setItem("smartcare_token", res.data.token);
+      localStorage.setItem("smartcare_user", JSON.stringify(res.data.user)); 
       toast.success("Logged in successfully");
       navigate("/dashboard");
     } catch (err) {

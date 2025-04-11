@@ -9,7 +9,9 @@ const Register = () => {
     name: "",
     email: "",
     password: "",
+    role: "patient",
   });
+
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
@@ -21,12 +23,11 @@ const Register = () => {
       ...formData,
       [name]: value,
     });
-    
-    // Clear validation error when field is edited
+
     if (validationErrors[name]) {
       setValidationErrors({
         ...validationErrors,
-        [name]: ""
+        [name]: "",
       });
     }
   };
@@ -44,23 +45,23 @@ const Register = () => {
     } else if (formData.password.length < 6) {
       errors.password = "Password must be at least 6 characters";
     }
-    
+    if (!formData.role) {
+      errors.role = "Role is required";
+    }
+
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
     if (!validateForm()) return;
-  
+
     setIsLoading(true);
     try {
       const res = await registerPatient(formData);
-  
+
       toast.success("🎉 " + (res.data.message || "Registration successful!"));
-      
-      // Navigate after toast shows
       setTimeout(() => {
         navigate("/login");
       }, 1000);
@@ -72,7 +73,6 @@ const Register = () => {
       setIsLoading(false);
     }
   };
-  
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 to-black p-4">
@@ -159,6 +159,31 @@ const Register = () => {
               {validationErrors.password && (
                 <p className="mt-1 text-sm text-red-400">{validationErrors.password}</p>
               )}
+            </div>
+
+            <div className="relative">
+              <select
+                id="role"
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className={`w-full px-4 py-3 bg-gray-900 text-white rounded-lg border ${
+                  validationErrors.role ? "border-red-500 focus:ring-red-500" : "border-gray-700 focus:ring-sky-500"
+                } focus:outline-none focus:ring-2 transition-all duration-200 appearance-none`}
+              >
+                <option value="patient">Patient</option>
+                <option value="caregiver">Caregiver</option>
+                <option value="hospital">Hospital</option>
+                <option value="admin">Admin</option>
+              </select>
+              {validationErrors.role && (
+                <p className="mt-1 text-sm text-red-400">{validationErrors.role}</p>
+              )}
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M6 9l6 6 6-6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
             </div>
           </div>
 

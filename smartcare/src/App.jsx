@@ -8,6 +8,8 @@ import Dashboard from "./pages/Dashboard";
 import FooterNavbar from "./pages/Footer";
 import ForgotPassword from "./pages/ForgotPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
+import HealthMonitor from "./pages/Simulation";
+import PatientDashboard from "./pages/patientProfile";
 const App = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white p-6">
@@ -22,6 +24,22 @@ const App = () => {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+          <Route
+          path="/health"
+          element={
+            <ProtectedRoute>
+              <HealthMonitor />
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <PatientDashboard />
             </ProtectedRoute>
           }
         />

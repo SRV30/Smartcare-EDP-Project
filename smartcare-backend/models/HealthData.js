@@ -1,19 +1,19 @@
+// models/HealthData.js
 import mongoose from "mongoose";
 
-const healthDataSchema = new mongoose.Schema({
-  heartRate: {
-    type: Number,
-    required: true,
-  },
-  spo2: {
-    type: Number,
-    required: true,
-  },
-  timestamp: {
-    type: Date,
-    default: Date.now,
-  },
+const streamSchema = new mongoose.Schema({
+  heartRate: Number,
+  spo2: Number,
+  temperature: Number,
+  timestamp: Date,
 });
 
-const HealthData = mongoose.model("HealthData", healthDataSchema);
-export default HealthData;
+const HealthDataSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  heartRate: Number,
+  spo2: Number,
+  temperature: Number,
+  stream: [streamSchema], // 💾 10-sec stream
+});
+
+export default mongoose.model("HealthData", HealthDataSchema);

@@ -45,6 +45,8 @@ app.get("/", (req, res) => {
 //routes
 import dataRoute from "./route/data.js";
 import authRoute from "./route/authRoutes.js";
+import healthRoute from "./route/healthSimulate.js";
+import linkingRoute from "./route/linkingRoutes.js";
 
 app.use("/api/data", dataRoute);
 app.use("/api/auth", authRoute);
@@ -56,7 +58,8 @@ app.get("/api/health-data", (req, res) => {
   };
   res.json(dummyData);
 });
-
+app.use("/api/health", healthRoute);
+app.use("/api/link", linkingRoute);
 
 connectDB().then(() => {
   app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
