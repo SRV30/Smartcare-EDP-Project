@@ -47,19 +47,14 @@ import dataRoute from "./route/data.js";
 import authRoute from "./route/authRoutes.js";
 import healthRoute from "./route/healthSimulate.js";
 import linkingRoute from "./route/linkingRoutes.js";
+import bmiRoutes from "./route/bmiRoutes.js";
+
 
 app.use("/api/data", dataRoute);
 app.use("/api/auth", authRoute);
-app.get("/api/health-data", (req, res) => {
-  const dummyData = {
-    heartRate: Math.floor(Math.random() * (85 - 63 + 1)) + 60, // 60–110 bpm
-    spo2: Math.floor(Math.random() * (97 - 90 + 1)) + 90,       // 90–100%
-    temperature: (36 + Math.random() * 2).toFixed(1)             // 36.0–38.0 °C
-  };
-  res.json(dummyData);
-});
 app.use("/api/health", healthRoute);
 app.use("/api/link", linkingRoute);
+app.use("/api/bmi", bmiRoutes);
 
 connectDB().then(() => {
   app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import LinkedCaregivers from "./SendLinkRequest";
-import PendingRequests from "./PendingRequests";
+import BMICalculator from "./BMICalculator";
 
 const PatientDashboard = () => {
   const [user, setUser] = useState(null);
@@ -19,11 +18,7 @@ const PatientDashboard = () => {
       <h1 className="text-2xl font-bold mb-4">
         Welcome, {user.name} ({user.role})
       </h1>
-      {user.role === "patient" && <LinkedCaregivers user={user} />}
-      {(user.role === "caregiver" || user.role === "hospital") && (
-        <PendingRequests user={user} />
-      )}
-      {/* {user.role === "admin" && <AdminSection user={user} />} */}
+      <BMICalculator />
     </div>
   );
 };

@@ -10,6 +10,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
 import HealthMonitor from "./pages/Simulation";
 import PatientDashboard from "./pages/patientProfile";
+import Setting from "./pages/Setting";
 const App = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white p-6">
@@ -40,6 +41,14 @@ const App = () => {
           element={
             <ProtectedRoute>
               <PatientDashboard />
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Setting />
             </ProtectedRoute>
           }
         />

@@ -1,15 +1,23 @@
 import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import LogoutButton from "./LogoutButton";
 import { useNavigate } from "react-router-dom";
-import { BarChart, Clock, Map, Heart, Activity, Thermometer } from "lucide-react";
+import {
+  BarChart,
+  Clock,
+  Map,
+  Heart,
+  Activity,
+  Thermometer,
+} from "lucide-react";
 import { simulateHealthData } from "../api/auth";
 
 const Dashboard = () => {
   const [data, setData] = useState(null);
   // eslint-disable-next-line no-unused-vars
   const [location, setLocation] = useState({ lat: null, lon: null });
-  const [readableLocation, setReadableLocation] = useState("Fetching location...");
+  const [readableLocation, setReadableLocation] = useState(
+    "Fetching location..."
+  );
   // eslint-disable-next-line no-unused-vars
   const [stream, setStream] = useState([]);
   const [userId, setUserId] = useState(null);
@@ -129,7 +137,7 @@ const Dashboard = () => {
     fetchHealthData();
     fetchLocation();
     fetchData();
-    const interval = setInterval(fetchData, 10000); // auto-refresh every 10s
+    const interval = setInterval(fetchData, 60000);
     return () => clearInterval(interval);
   }, [fetchData]);
 
@@ -140,8 +148,8 @@ const Dashboard = () => {
       icon: <Heart className="text-rose-400" size={22} />,
       color: "from-rose-500/20 to-rose-500/5",
     },
-    { 
-      label: "Blood Oxygen (SpO2)", 
+    {
+      label: "Blood Oxygen (SpO2)",
       value: avg.spo2 ? `${avg.spo2}%` : "Loading...",
       icon: <Activity className="text-blue-400" size={22} />,
       color: "from-blue-500/20 to-blue-500/5",
@@ -156,27 +164,25 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
-      {/* Top navigation bar */}
       <header className="bg-gray-900 px-6 py-4 border-b border-gray-800 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <Activity className="text-sky-400" size={28} />
             <h1 className="text-2xl font-bold text-sky-400">SmartCare</h1>
           </div>
-          <LogoutButton />
         </div>
       </header>
 
-      {/* Main content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-white mb-1">Health Dashboard</h2>
+          <h2 className="text-3xl font-bold text-white mb-1">
+            Health Dashboard
+          </h2>
           <p className="text-gray-400">
             Monitor your vital signs and health metrics in real-time
           </p>
         </div>
 
-        {/* Vital signs section */}
         <section className="mb-10">
           <div className="flex items-center mb-6">
             <h3 className="text-xl font-semibold text-white">Vital Signs</h3>
@@ -195,10 +201,16 @@ const Dashboard = () => {
                 <div className="bg-gray-900/90 backdrop-blur-sm p-6">
                   <div className="flex items-center mb-3">
                     {item.icon}
-                    <h4 className="text-lg font-medium text-gray-200 ml-2">{item.label}</h4>
+                    <h4 className="text-lg font-medium text-gray-200 ml-2">
+                      {item.label}
+                    </h4>
                   </div>
                   <p className="text-3xl font-bold text-white">
-                    {loading ? <span className="text-gray-500">Loading...</span> : item.value}
+                    {loading ? (
+                      <span className="text-gray-500">Loading...</span>
+                    ) : (
+                      item.value
+                    )}
                   </p>
                 </div>
               </div>
@@ -206,52 +218,52 @@ const Dashboard = () => {
           </div>
         </section>
 
-        {/* Location and Health Score section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
-          {/* Location card */}
           <div className="bg-gray-900 border border-gray-800 rounded-2xl shadow-lg overflow-hidden">
             <div className="bg-gradient-to-br from-indigo-500/20 to-indigo-500/5 p-6">
               <div className="flex items-center mb-4">
                 <Map className="text-indigo-400" size={22} />
-                <h3 className="text-lg font-medium text-gray-200 ml-2">Current Location</h3>
+                <h3 className="text-lg font-medium text-gray-200 ml-2">
+                  Current Location
+                </h3>
               </div>
-              <p className="text-sm text-gray-300 line-clamp-2">{readableLocation}</p>
+              <p className="text-sm text-gray-300 line-clamp-2">
+                {readableLocation}
+              </p>
             </div>
           </div>
 
-          {/* Health Score card */}
           <div className="bg-gray-900 border border-gray-800 rounded-2xl shadow-lg overflow-hidden">
             <div className="bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 p-6">
               <div className="flex items-center mb-4">
                 <BarChart className="text-emerald-400" size={22} />
-                <h3 className="text-lg font-medium text-gray-200 ml-2">Health Score</h3>
+                <h3 className="text-lg font-medium text-gray-200 ml-2">
+                  Health Score
+                </h3>
               </div>
               <div className="flex items-end">
-                <p className={`text-4xl font-bold ${getHealthScoreColor()}`}>{calculateHealthScore()}</p>
-                <p className="text-sm text-gray-400 ml-3 mb-1">{getHealthMessage()}</p>
+                <p className={`text-4xl font-bold ${getHealthScoreColor()}`}>
+                  {calculateHealthScore()}
+                </p>
+                <p className="text-sm text-gray-400 ml-3 mb-1">
+                  {getHealthMessage()}
+                </p>
               </div>
               <p className="text-xs text-gray-500 mt-4">
-                Score is calculated based on your current vital signs (Heart Rate, SpO2 & Body Temperature).
+                Score is calculated based on your current vital signs (Heart
+                Rate, SpO2 & Body Temperature).
               </p>
             </div>
           </div>
         </div>
 
-        {/* Action buttons */}
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-4 mb-15">
           <button
             onClick={() => navigate("/health")}
             className="bg-sky-600 hover:bg-sky-700 transition-colors text-white px-6 py-3 rounded-xl font-medium flex items-center"
           >
             <Activity size={18} className="mr-2" />
             Health Monitor
-          </button>
-          <button
-            onClick={() => navigate("/heartrate")}
-            className="bg-gray-800 hover:bg-gray-700 transition-colors text-white px-6 py-3 rounded-xl font-medium flex items-center"
-          >
-            <Heart size={18} className="mr-2" />
-            Detailed Statistics
           </button>
         </div>
       </main>

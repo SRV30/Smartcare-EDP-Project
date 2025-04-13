@@ -23,7 +23,7 @@ export const getCurrentUser = () => {
 };
 export const setCurrentUser = (user) => {
   localStorage.setItem("smartcare_user", JSON.stringify(user));
-}
+};
 
 // 🔽 AUTH ROUTES
 export const registerPatient = (formData) =>
@@ -33,7 +33,6 @@ export const loginPatient = (formData) => API.post("/auth/login", formData);
 // 🧪 SIMULATE HEALTH DATA
 export const simulateHealthData = (userId) =>
   API.post("/health/simulate", { userId });
-
 
 // 🔗 PATIENT ↔ CAREGIVER/HOSPITAL LINKING
 export const sendLinkRequest = ({ patientId, targetEmail }) =>
@@ -51,4 +50,11 @@ export const getLinkedPatientsWithHealthData = (userId) =>
 export const getApprovedPatients = async (caregiverId) => {
   return API.get(`/link/approved/${caregiverId}`);
 };
+
+// 📥 Save or update BMI data
+export const saveOrUpdateBmi = ({ userId, height, weight }) =>
+  API.post("/bmi/save", { userId, height, weight });
+
+// 📤 Get BMI data by userId
+export const getBmiData = (userId) => API.get(`/bmi/${userId}`);
 
