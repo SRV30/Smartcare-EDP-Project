@@ -58,3 +58,5 @@ export const saveOrUpdateBmi = ({ userId, height, weight }) =>
 // 📤 Get BMI data by userId
 export const getBmiData = (userId) => API.get(`/bmi/${userId}`);
 
+export const getLatestHealthData = (userId) =>
+  API.get(`/health/latest/${userId}`);
