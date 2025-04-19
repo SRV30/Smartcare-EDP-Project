@@ -131,7 +131,6 @@ const Dashboard = () => {
       icon: <Heart className="text-rose-400" size={22} />,
       gradient: "from-rose-500/20 to-transparent",
       borderColor: "border-rose-900/50",
-      normalRange: "60-100 bpm",
     },
     {
       label: "SpO2",
@@ -139,7 +138,6 @@ const Dashboard = () => {
       icon: <Activity className="text-sky-400" size={22} />,
       gradient: "from-sky-500/20 to-transparent",
       borderColor: "border-sky-900/50",
-      normalRange: "95-100%",
     },
     {
       label: "Temperature",
@@ -147,7 +145,6 @@ const Dashboard = () => {
       icon: <Thermometer className="text-amber-400" size={22} />,
       gradient: "from-amber-500/20 to-transparent",
       borderColor: "border-amber-900/50",
-      normalRange: "36.1-37.2°C",
     },
   ];
 
@@ -161,18 +158,6 @@ const Dashboard = () => {
               <Activity className="text-black" size={20} />
             </div>
             <h1 className="text-xl font-bold text-sky-400">SmartCare</h1>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <button className="text-gray-400 hover:text-sky-400 transition-colors">
-              <Bell size={20} />
-            </button>
-            <button className="text-gray-400 hover:text-sky-400 transition-colors">
-              <Settings size={20} />
-            </button>
-            <div className="h-8 w-8 bg-sky-900 rounded-full flex items-center justify-center">
-              <User size={16} className="text-sky-300" />
-            </div>
           </div>
         </div>
       </header>
