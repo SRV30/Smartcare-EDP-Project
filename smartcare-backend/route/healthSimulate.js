@@ -15,7 +15,7 @@ const simulateAndSave = async (userId) => {
       temperatures = [];
 
     for (let i = 0; i < 9; i++) {
-      const heartRate = getRandomValue(60, 80);
+      const heartRate = getRandomValue(60, 100);
       const spo2 = getRandomValue(90, 100);
       const temperature = (Math.random() * (37.5 - 36.0) + 36.0).toFixed(1);
 
