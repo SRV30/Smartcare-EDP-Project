@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { getApprovedPatients, getLatestHealthData } from "../api/auth";
 
 const ApprovedPatientHealthData = () => {
@@ -6,18 +6,17 @@ const ApprovedPatientHealthData = () => {
   const [approved, setApproved] = useState([]);
   const [healthDataMap, setHealthDataMap] = useState({});
   const [loading, setLoading] = useState(true);
-  // eslint-disable-next-line no-unused-vars
   const [location, setLocation] = useState({ lat: null, lon: null });
   const [readableLocation, setReadableLocation] = useState("Fetching location...");
+  const [alertedPatients, setAlertedPatients] = useState({});
+  const [sosPatient, setSosPatient] = useState(null);
+  const audioRef = useRef(new Audio("/sos-alert2.mp3"));
 
   useEffect(() => {
     const storedUser = localStorage.getItem("smartcare_user");
     if (storedUser) {
       const parsed = JSON.parse(storedUser);
-      setUser({
-        ...parsed,
-        _id: parsed._id || parsed.id,
-      });
+      setUser({ ...parsed, _id: parsed._id || parsed.id });
     }
   }, []);
 
@@ -56,7 +55,7 @@ const ApprovedPatientHealthData = () => {
     };
 
     fetchHealthData();
-    const interval = setInterval(fetchHealthData, 10000); // refresh every 10 sec
+    const interval = setInterval(fetchHealthData, 10000);
     return () => clearInterval(interval);
   }, [approved]);
 
@@ -65,7 +64,7 @@ const ApprovedPatientHealthData = () => {
       setReadableLocation("Location access not supported");
       return;
     }
-    
+
     navigator.geolocation.getCurrentPosition(
       async ({ coords }) => {
         setLocation({ lat: coords.latitude, lon: coords.longitude });
@@ -83,55 +82,86 @@ const ApprovedPatientHealthData = () => {
     );
   }, []);
 
-  // Helper function to format timestamp
+  useEffect(() => {
+    for (const patient of approved) {
+      const data = healthDataMap[patient._id];
+      if (data) {
+        const needsSOS = data.heartRate > 80 && data.spo2 < 95;
+
+        if (needsSOS && !alertedPatients[patient._id]) {
+          audioRef.current.play();
+          setSosPatient(patient);
+          setAlertedPatients(prev => ({ ...prev, [patient._id]: true }));
+        } else if (!needsSOS && alertedPatients[patient._id]) {
+          setAlertedPatients(prev => {
+            const copy = { ...prev };
+            delete copy[patient._id];
+            return copy;
+          });
+        }
+      }
+    }
+  }, [healthDataMap]);
+
   const formatTimestamp = (timestamp) => {
     if (!timestamp) return "Unknown";
-    
     try {
       const date = new Date(timestamp);
       return date.toLocaleString();
     } catch (e) {
-      console.error("❌ Error formatting timestamp:", e);
       return timestamp;
     }
   };
 
-  // Helper function to determine heart rate status
   const getHeartRateStatus = (rate) => {
     if (!rate) return { color: "text-gray-400", label: "Unknown" };
-    
     if (rate < 60) return { color: "text-yellow-400", label: "Low" };
     if (rate > 100) return { color: "text-red-500", label: "Elevated" };
     return { color: "text-green-400", label: "Normal" };
   };
 
-  // Helper function to determine SpO2 status
   const getSpO2Status = (spo2) => {
     if (!spo2) return { color: "text-gray-400", label: "Unknown" };
-    
     if (spo2 < 95) return { color: "text-red-500", label: "Low" };
     return { color: "text-green-400", label: "Normal" };
   };
 
-  // Helper function to determine temperature status
   const getTemperatureStatus = (temp) => {
     if (!temp) return { color: "text-gray-400", label: "Unknown" };
-    
     if (temp < 36) return { color: "text-blue-400", label: "Low" };
     if (temp > 37.5) return { color: "text-red-500", label: "Elevated" };
     return { color: "text-green-400", label: "Normal" };
   };
 
+  const closeSos = () => setSosPatient(null);
+
   return (
     <div className="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      {sosPatient && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center">
+          <div className="bg-red-900 border border-red-600 text-white p-6 rounded-xl shadow-xl text-center max-w-md">
+            <h2 className="text-3xl font-bold mb-2">🚨 SOS Alert!</h2>
+            <p className="mb-4 font-medium">{sosPatient.name} needs attention:</p>
+            <ul className="text-left text-sm list-disc pl-5 mb-4">
+              <li>Heart Rate: {healthDataMap[sosPatient._id]?.heartRate} bpm</li>
+              <li>SpO2: {healthDataMap[sosPatient._id]?.spo2}%</li>
+            </ul>
+            <button
+              onClick={closeSos}
+              className="bg-white text-red-800 font-semibold px-4 py-2 rounded hover:bg-gray-200"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-10">
           <h1 className="text-3xl font-extrabold text-sky-400 sm:text-4xl">
             SmartCare Health Dashboard
           </h1>
-          <p className="mt-3 text-xl text-gray-300">
-            Real-time patient monitoring
-          </p>
+          <p className="mt-3 text-xl text-gray-300">Real-time patient monitoring</p>
         </div>
 
         {loading ? (
@@ -148,12 +178,9 @@ const ApprovedPatientHealthData = () => {
               const heartRateStatus = healthData ? getHeartRateStatus(healthData.heartRate) : { color: "text-gray-400", label: "Unknown" };
               const spo2Status = healthData ? getSpO2Status(healthData.spo2) : { color: "text-gray-400", label: "Unknown" };
               const tempStatus = healthData ? getTemperatureStatus(healthData.temperature) : { color: "text-gray-400", label: "Unknown" };
-              
+
               return (
-                <div 
-                  key={patient._id} 
-                  className="bg-black rounded-xl overflow-hidden shadow-lg border border-sky-900 hover:border-sky-600 transition-all duration-300"
-                >
+                <div key={patient._id} className="bg-black rounded-xl overflow-hidden shadow-lg border border-sky-900 hover:border-sky-600 transition-all duration-300">
                   <div className="px-6 py-4 border-b border-sky-900">
                     <div className="flex items-center justify-between">
                       <div>
