@@ -86,7 +86,7 @@ const ApprovedPatientHealthData = () => {
     for (const patient of approved) {
       const data = healthDataMap[patient._id];
       if (data) {
-        const needsSOS = data.heartRate > 80 && data.spo2 < 96;
+        const needsSOS = data.heartRate > 79 && data.spo2 < 96;
 
         if (needsSOS && !alertedPatients[patient._id]) {
           audioRef.current.play();
